@@ -2,14 +2,17 @@
 
 'use strict';
 
-const FS = require('fs');
-const Path = require('path');
+const OS = require('os');
 const Program = require('commander');
-const YAML = require('yaml');
+const ConfigFile = require('./config-file');
 
+global.homeDirectory = OS.homedir();
 global.scriptDirectory = __dirname;
-global.settingsDirectory = `${__dirname}/home/.unfold`; // replace with /home/{USER}/.unfold
 global.workingDirectory = process.cwd();
+
+global.profileConfig = null;
+global.deploymentConfig = null;
+
 
 // starts arg parsing
 Program
@@ -22,21 +25,6 @@ Program
   .option('--destroy', 'destroy all deployed instances with deployment tag')
   .parse(process.argv);
 
-
-// parse deployment file
-if (!FS.existsSync(Path.join(workingDirectory, 'deployment.yml'))) {
-  console.log('Deployment file deployment.yml does not exist.');
-  process.exit(1);
-}
-global.deploymentConfig = YAML.parse(FS.readFileSync(Path.join(workingDirectory, 'deployment.yml'), 'utf8'));
-
-// parse profile file
-if (!FS.existsSync(Path.join(settingsDirectory, 'profile.yml'))) {
-  console.log('Profile file profile.yml does not exist.');
-  process.exit(1);
-}
-global.profileConfig = YAML.parse(FS.readFileSync(Path.join(settingsDirectory, 'profile.yml'), 'utf8'));
-
 // empty line for better readability
 console.log();
 
@@ -46,26 +34,41 @@ if (Program.auth) {
 };
 
 if (Program.create) {
+  ConfigFile.profile();
+  ConfigFile.deployment();
+
   const create = require('./commands/create');
   create(Program.create);
 };
 
 if (Program.update) {
+  ConfigFile.profile();
+  ConfigFile.deployment();
+
   const update = require('./commands/update');
   update(Program.update);
 };
 
 if (Program.stacks) {
+  ConfigFile.profile();
+  ConfigFile.deployment();
+
   const stacks = require('./commands/stacks');
   stacks(Program.stacks);
 };
 
 if (Program.sshKeys) {
+  ConfigFile.profile();
+  ConfigFile.deployment();
+
   const sshKeys = require('./commands/ssh-keys');
   sshKeys(Program.sshKeys);
 };
 
 if (Program.destroy) {
+  ConfigFile.profile();
+  ConfigFile.deployment();
+
   const destroy = require('./commands/destroy');
   destroy(Program.destroy);
 };
