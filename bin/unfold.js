@@ -1,5 +1,7 @@
 #!/usr/bin/env node
 
+'use strict';
+
 const FS = require('fs');
 const Path = require('path');
 const Program = require('commander');
