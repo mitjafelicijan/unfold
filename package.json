@@ -9,7 +9,7 @@
   },
   "scripts": {
     "start": "node bin/unfold.js",
-    "publish": "np"
+    "release": "np"
   },
   "keywords": [],
   "author": "Mitja Felicijan",
