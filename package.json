@@ -9,7 +9,7 @@
   },
   "scripts": {
     "start": "node bin/unfold.js",
-    "release": "np --no-2fa"
+    "release": "np"
   },
   "keywords": [],
   "author": "Mitja Felicijan",
@@ -33,6 +33,6 @@
     "yaml": "^1.7.2"
   },
   "devDependencies": {
-    "np": "^6.0.0"
+    "np": "^4.0.2"
   }
 }
