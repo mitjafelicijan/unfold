@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 const FS = require('fs');
 const Path = require('path');
 const Program = require('commander');
@@ -6,6 +8,18 @@ const YAML = require('yaml');
 global.scriptDirectory = __dirname;
 global.settingsDirectory = `${__dirname}/home/.unfold`; // replace with /home/{USER}/.unfold
 global.workingDirectory = process.cwd();
+
+// starts arg parsing
+Program
+  .version('0.1.0')
+  .option('--auth', 'authenticates with DigitalOcean')
+  .option('--create', 'create new deployment')
+  .option('--update', 'update application in stack')
+  .option('--stacks [wide]', 'list all deployed droplets')
+  .option('--ssh-keys', 'lists available ssh keys under account')
+  .option('--destroy', 'destroy all deployed instances with deployment tag')
+  .parse(process.argv);
+
 
 // parse deployment file
 if (!FS.existsSync(Path.join(workingDirectory, 'deployment.yml'))) {
@@ -20,17 +34,6 @@ if (!FS.existsSync(Path.join(settingsDirectory, 'profile.yml'))) {
   process.exit(1);
 }
 global.profileConfig = YAML.parse(FS.readFileSync(Path.join(settingsDirectory, 'profile.yml'), 'utf8'));
-
-// starts arg parsing
-Program
-  .version('0.1.0')
-  .option('--auth', 'authenticates with DigitalOcean')
-  .option('--create', 'create new deployment')
-  .option('--update', 'update application in stack')
-  .option('--stacks [wide]', 'list all deployed droplets')
-  .option('--ssh-keys', 'lists available ssh keys under account')
-  .option('--destroy', 'desytroy all deployed instances with deployment tag')
-  .parse(process.argv);
 
 // empty line for better readability
 console.log();
