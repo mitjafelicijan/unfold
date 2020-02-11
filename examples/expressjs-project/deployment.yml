@@ -1,0 +1,23 @@
+deployment:
+  name: my-new-application
+  tag: my-app-tag
+  region: nyc3
+  sshKeys:
+    - 5391863
+    - 5298921
+    - 25500471
+
+application:
+  buildpack: ubuntu-18-04-x64_nginx
+  replicas: 2
+
+services:
+  - kind: loadbalancer
+    healthcheck: /
+    rules:
+      - protocol: http
+        port: 80
+        targetPort: 3000
+      - protocol: https
+        port: 443
+        targetPort: 3000
