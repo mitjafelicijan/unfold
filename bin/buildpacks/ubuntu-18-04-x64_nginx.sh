@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# genedar system stuff
+# general system stuff
 apt update
 
 # provision commands go here

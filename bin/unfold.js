@@ -13,7 +13,6 @@ global.workingDirectory = process.cwd();
 global.profileConfig = null;
 global.deploymentConfig = null;
 
-
 // starts arg parsing
 Program
   .version('0.1.0')
