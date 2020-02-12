@@ -2,14 +2,6 @@
 
 **Elastic Beanstalk like deployments for DigitalOcean**
 
-
-## Currently supported
-
-- [x] Create stack with load balancer
-- [ ] Databases
-- [ ] Spaces
-
-
 ## Deployment file
 
 ```yaml

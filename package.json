@@ -11,7 +11,15 @@
     "start": "node bin/unfold.js",
     "release": "np"
   },
-  "keywords": [],
+  "keywords": [
+    "cloud",
+    "digitalocean",
+    "droplet",
+    "orchestration",
+    "microservices",
+    "service",
+    "loadbalancing"
+  ],
   "author": "Mitja Felicijan",
   "license": "MIT",
   "repository": {
