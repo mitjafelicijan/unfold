@@ -1,6 +1,6 @@
 {
   "name": "@mitjafelicijan/unfold",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "description": "Elastic Beanstalk like deployments for DigitalOcean",
   "main": "./bin/unfold.js",
   "preferGlobal": true,
