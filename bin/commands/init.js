@@ -48,7 +48,11 @@ module.exports = async (subcommand) => {
   const buildpacks = Array();
 
   for (const buildpack of buildpackFiles) {
-    buildpacks.push(buildpack.replace('.sh', ''));
+    const file = Path.join(scriptDirectory, `../buildpacks/${buildpack}`);
+    const stat = FS.lstatSync(file);
+    if (stat.isDirectory()) {
+      buildpacks.push(buildpack);
+    }
   }
 
   // generates list of available available keys
@@ -162,11 +166,11 @@ module.exports = async (subcommand) => {
       }
     ]);
 
-
+  // writes to deployment.yml file
   const buildpackFile = Path.join(scriptDirectory, `../templates/deployment.yml`);
-  const buildpack = FS.readFileSync(buildpackFile, 'utf8');
+  const buildpackStream = FS.readFileSync(buildpackFile, 'utf8');
 
-  const output = Mustache.render(buildpack, {
+  const output = Mustache.render(buildpackStream, {
     name: initConfig.name,
     tag: initConfig.tag,
     region: initConfig.region,
@@ -182,5 +186,3 @@ module.exports = async (subcommand) => {
   FS.writeFileSync(Path.join(workingDirectory, 'deployment.yml'), output);
 
 };
-
-

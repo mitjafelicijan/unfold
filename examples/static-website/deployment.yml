@@ -1,9 +1,9 @@
 version: 1
 
 deployment:
-  name: my-new-application
-  tag: my-app-tag
-  region: nyc3
+  name: qwe
+  tag: qwe
+  region: nyc1
   sshKeys:
     - 5391863
     - 5298921
@@ -20,7 +20,7 @@ services:
     rules:
       - protocol: http
         port: 80
-        targetPort: 3000
+        targetPort: 80
       - protocol: https
         port: 443
-        targetPort: 3000
+        targetPort: 80

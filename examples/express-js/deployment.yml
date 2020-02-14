@@ -1,17 +1,18 @@
 version: 1
 
 deployment:
-  name: qwe
-  tag: qwe
+  name: a
+  tag: a
   region: nyc1
   sshKeys:
     - 5391863
     - 5298921
+    - 25500471
 
 application:
-  buildpack: ubuntu-18-04-x64_nginx
+  buildpack: ubuntu-18-04-x64_nodejs.12
   size: s-1vcpu-1gb
-  replicas: 1
+  replicas: 2
 
 services:
   - kind: loadbalancer

@@ -2,7 +2,9 @@
 
 **Elastic Beanstalk like deployments for DigitalOcean**
 
-**Still in development phase**
+**Still in development phase. USE AT YOUR OWN DISCRETION!**
+
+[Ideas, bugs, features can be submitted here »](https://github.com/mitjafelicijan/unfold/issues/new)
 
 ## Prerequisites
 
@@ -11,6 +13,10 @@
 3. Install unfold tool `[sudo] npm i -g @mitjafelicijan/unfold`
 4. If first time use, execute `unfold --auth`
 5. Go to your projects's folder and execute `unfold --init`
+6. Create `deployment.yml` by executing `unfold --create`
+7. Deploy your code with `unfold --deploy`
+
+Check also `unfold --help` for additional information.
 
 ## Deployment file
 

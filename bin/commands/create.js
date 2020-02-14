@@ -52,7 +52,7 @@ module.exports = async (subcommand) => {
   console.log();
 
   // buildpack script
-  const buildpackFile = Path.join(scriptDirectory, `../buildpacks/${deploymentConfig.application.buildpack}.sh`);
+  const buildpackFile = Path.join(scriptDirectory, `../buildpacks/${deploymentConfig.application.buildpack}/provision.sh`);
   if (!FS.existsSync(buildpackFile)) {
     console.log(`Buildpack definition for ${deploymentConfig.application.buildpack} does not exist.`);
     process.exit(1);
@@ -65,15 +65,21 @@ module.exports = async (subcommand) => {
   Util.log('Starting to provision services');
   for (const service of deploymentConfig.services) {
     if (service.kind == 'loadbalancer') {
+
+      let healthcheckPort = 80;
       const forwardingRules = Array();
       for (const rule of service.rules) {
         forwardingRules.push({
           entry_protocol: rule.protocol,
           entry_port: rule.port,
           target_protocol: rule.protocol,
-          target_port: rule.port,
+          target_port: rule.targetPort,
           tls_passthrough: rule.protocol == 'https' ? true : false,
         });
+
+        if (rule.protocol == 'http') {
+          healthcheckPort = rule.targetPort;
+        }
       }
 
       const res = Request('POST', 'https://api.digitalocean.com/v2/load_balancers', {
@@ -82,14 +88,14 @@ module.exports = async (subcommand) => {
           'Authorization': `Bearer ${profileConfig.apiKey}`,
         },
         json: {
-          name: `lb-${deploymentConfig.deployment.name}-${UUID.generate()}`,
+          name: `lb-${deploymentConfig.deployment.name}-${UUID.generate().substr(0, 10)}`,
           region: deploymentConfig.deployment.region,
           sticky_sessions: { type: 'none' },
           tag: deploymentConfig.deployment.tag,
           forwarding_rules: forwardingRules,
           health_check: {
             protocol: 'http',
-            port: 80,
+            port: healthcheckPort,
             path: service.healthcheck,
             check_interval_seconds: 10,
             response_timeout_seconds: 5,
@@ -106,7 +112,7 @@ module.exports = async (subcommand) => {
   // --> DROPLETS
 
   // generates N ammount of instances names based on replica count in deployment file
-  const instances = Array(deploymentConfig.application.replicas).fill().map((v, i) => `${deploymentConfig.deployment.name}-${UUID.generate()}`);
+  const instances = Array(deploymentConfig.application.replicas).fill().map((v, i) => `${deploymentConfig.deployment.name}-${UUID.generate().substr(0, 10)}`);
 
   // starts spinner
   Util.log('Request for droplet creation sent to DigitalOcean');
@@ -179,8 +185,8 @@ module.exports = async (subcommand) => {
       // check if droplet provisioned
       if (!droplet.provisioned && droplet.ipv4 != null) {
         try {
-          const remoteProvisionFile = execSync(`ssh -o "StrictHostKeyChecking no" root@${droplet.ipv4} cat /root/install_completed`, {
-            timeout: 5000,
+          const remoteProvisionFile = execSync(`ssh -o "StrictHostKeyChecking no" root@${droplet.ipv4} cat /root/provision_completed`, {
+            timeout: 15000,
             stdio: ['pipe', 'pipe', 'ignore'],
           });
 

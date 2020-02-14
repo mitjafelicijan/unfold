@@ -19,10 +19,12 @@ Program
   .option('--auth', 'authenticates with DigitalOcean')
   .option('--init', 'initializes new deployment.yml config file')
   .option('--create', 'create new deployment')
-  .option('--update', 'update application in stack [TODO]')
-  .option('--stacks [wide]', 'list all deployed droplets')
+  .option('--deploy', 'deploys new version of the application')
+  .option('--logs <dropletId>', 'fetches latest logs from instances')
+  .option('--resources [wide]', 'list all deployed resources')
   .option('--ssh-keys', 'lists available ssh keys under account')
   .option('--destroy', 'destroy all deployed instances with deployment tag')
+  .option('--balance', 'shows current balance in account')
   .parse(process.argv);
 
 // empty line for better readability
@@ -48,20 +50,28 @@ if (Program.init) {
   init(Program.init);
 };
 
-if (Program.update) {
+if (Program.deploy) {
   ConfigFile.profile();
   ConfigFile.deployment();
 
-  const update = require('./commands/update');
-  update(Program.update);
+  const deploy = require('./commands/deploy');
+  deploy(Program.deploy);
 };
 
-if (Program.stacks) {
+if (Program.logs) {
   ConfigFile.profile();
   ConfigFile.deployment();
 
-  const stacks = require('./commands/stacks');
-  stacks(Program.stacks);
+  const logs = require('./commands/logs');
+  logs(Program.logs);
+};
+
+if (Program.resources) {
+  ConfigFile.profile();
+  ConfigFile.deployment();
+
+  const resources = require('./commands/resources');
+  resources(Program.resources);
 };
 
 if (Program.sshKeys) {
@@ -78,4 +88,12 @@ if (Program.destroy) {
 
   const destroy = require('./commands/destroy');
   destroy(Program.destroy);
+};
+
+if (Program.balance) {
+  ConfigFile.profile();
+  ConfigFile.deployment();
+
+  const balance = require('./commands/balance');
+  balance(Program.balance);
 };
