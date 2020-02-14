@@ -10,7 +10,7 @@
 2. [Generate new personal access token](https://cloud.digitalocean.com/account/api/tokens)
 3. Install unfold tool `[sudo] npm i -g @mitjafelicijan/unfold`
 4. If first time use, execute `unfold --auth`
-5. Go to your projects's folder and execute `unfold --init nodejs.12`
+5. Go to your projects's folder and execute `unfold --init`
 
 ## Deployment file
 

@@ -17,7 +17,7 @@ global.deploymentConfig = null;
 Program
   .version('0.1.0')
   .option('--auth', 'authenticates with DigitalOcean')
-  .option('--init [type]', 'initializes new deployment.yml config file')
+  .option('--init', 'initializes new deployment.yml config file')
   .option('--create', 'create new deployment')
   .option('--update', 'update application in stack [TODO]')
   .option('--stacks [wide]', 'list all deployed droplets')
