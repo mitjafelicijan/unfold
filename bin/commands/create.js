@@ -18,6 +18,7 @@ module.exports = async (subcommand) => {
 
   console.log('Application:'.bold.underline);
   console.log('Buildpack:', deploymentConfig.application.buildpack);
+  console.log('VM size:', deploymentConfig.application.size);
   console.log('Replicas:', deploymentConfig.application.replicas);
   console.log();
 
@@ -119,7 +120,7 @@ module.exports = async (subcommand) => {
     json: {
       names: instances,
       region: deploymentConfig.deployment.region,
-      size: deploymentConfig.application.dropletSize,
+      size: deploymentConfig.application.size,
       image: deploymentConfig.application.buildpack.split('_')[0],
       backups: false,
       ipv6: true,

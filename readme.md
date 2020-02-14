@@ -2,6 +2,16 @@
 
 **Elastic Beanstalk like deployments for DigitalOcean**
 
+**Still in development phase**
+
+## Prerequisites
+
+1. [Add SSH key to your account](https://cloud.digitalocean.com/account/security)
+2. [Generate new personal access token](https://cloud.digitalocean.com/account/api/tokens)
+3. Install unfold tool `[sudo] npm i -g @mitjafelicijan/unfold`
+4. If first time use, execute `unfold --auth`
+5. Go to your projects's folder and execute `unfold --init nodejs.12`
+
 ## Deployment file
 
 ```yaml
@@ -36,32 +46,3 @@ services:
 - [ubuntu-18-04-x64_nodejs.12](https://github.com/mitjafelicijan/unfold/blob/master/bin/buildpacks/ubuntu-18-04-x64_nodejs.12.sh)
 
 If you would want to contribute additional buildpacks please create a pull request.
-
-### Available regions
-
-- nyc1
-- ams1
-- sfo1
-- nyc2
-- ams2
-- sgp1
-- lon1
-- nyc3
-- ams3
-- nyc3
-
-### Available size of Droplets
-
-- s-1vcpu-1gb
-- s-1vcpu-2gb
-- s-1vcpu-3gb
-- s-2vcpu-2gb
-- s-3vcpu-1gb
-- s-2vcpu-4gb
-- s-4vcpu-8gb
-- s-8vcpu-32gb
-- s-12vcpu-48gb
-- s-16vcpu-64gb
-- s-20vcpu-96gb
-- s-24vcpu-128gb
-- s-32vcpu-192gb
