@@ -18,7 +18,7 @@ Program
   .version('0.1.0')
   .option('--auth', 'authenticates with DigitalOcean')
   .option('--create', 'create new deployment')
-  .option('--update', 'update application in stack')
+  .option('--update', 'update application in stack [TODO]')
   .option('--stacks [wide]', 'list all deployed droplets')
   .option('--ssh-keys', 'lists available ssh keys under account')
   .option('--destroy', 'destroy all deployed instances with deployment tag')

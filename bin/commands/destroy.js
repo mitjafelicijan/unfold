@@ -13,14 +13,42 @@ module.exports = async (subcommand) => {
   }
   console.log();
 
-  // creates droplet
-  const res = Request('DELETE', `https://api.digitalocean.com/v2/droplets?tag_name=${deploymentConfig.deployment.tag}`, {
+  // deletes droplets with tag in deployment
+  Request('DELETE', `https://api.digitalocean.com/v2/droplets?tag_name=${deploymentConfig.deployment.tag}`, {
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${profileConfig.apiKey}`,
+    },
+  });
+  Util.log(`Deleting droplets with tag '${deploymentConfig.deployment.tag}'`.red);
+
+
+  // deleting load balancer
+  const res = Request('GET', 'https://api.digitalocean.com/v2/load_balancers', {
     headers: {
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${profileConfig.apiKey}`,
     },
   });
 
-  Util.log(`Request for deletion of stack with tag '${deploymentConfig.deployment.tag}' sent to DigitalOcean`.red);
+  const results = JSON.parse(res.getBody('utf8'));
+
+  let loadBalancerID = null;
+  for (const loadBalancer of results.load_balancers) {
+    if (loadBalancer.tag == deploymentConfig.deployment.tag) {
+      loadBalancerID = loadBalancer.id;
+      break;
+    }
+  }
+
+  if (loadBalancerID) {
+    Request('DELETE', `https://api.digitalocean.com/v2/load_balancers/${loadBalancerID}`, {
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${profileConfig.apiKey}`,
+      },
+    });
+    Util.log(`Deleting load balancer with tag '${deploymentConfig.deployment.tag}'`.red);
+  }
 
 };

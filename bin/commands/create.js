@@ -51,12 +51,58 @@ module.exports = async (subcommand) => {
   console.log();
 
   // buildpack script
-  const buildpackFile = Path.join(scriptDirectory, `buildpacks/${deploymentConfig.application.buildpack}.sh`);
+  const buildpackFile = Path.join(scriptDirectory, `../buildpacks/${deploymentConfig.application.buildpack}.sh`);
   if (!FS.existsSync(buildpackFile)) {
     console.log(`Buildpack definition for ${deploymentConfig.application.buildpack} does not exist.`);
     process.exit(1);
   }
   const buildpack = FS.readFileSync(buildpackFile, 'utf8');
+
+  // --> ADDITIONAL SERVICES
+
+  // creates additional services
+  Util.log('Starting to provision services');
+  for (const service of deploymentConfig.services) {
+    if (service.kind == 'loadbalancer') {
+      const forwardingRules = Array();
+      for (const rule of service.rules) {
+        forwardingRules.push({
+          entry_protocol: rule.protocol,
+          entry_port: rule.port,
+          target_protocol: rule.protocol,
+          target_port: rule.port,
+          tls_passthrough: rule.protocol == 'https' ? true : false,
+        });
+      }
+
+      const res = Request('POST', 'https://api.digitalocean.com/v2/load_balancers', {
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${profileConfig.apiKey}`,
+        },
+        json: {
+          name: `lb-${deploymentConfig.deployment.name}-${UUID.generate()}`,
+          region: deploymentConfig.deployment.region,
+          sticky_sessions: { type: 'none' },
+          tag: deploymentConfig.deployment.tag,
+          forwarding_rules: forwardingRules,
+          health_check: {
+            protocol: 'http',
+            port: 80,
+            path: service.healthcheck,
+            check_interval_seconds: 10,
+            response_timeout_seconds: 5,
+            healthy_threshold: 5,
+            unhealthy_threshold: 3
+          }
+        },
+      });
+      Util.log('Load balancer created but it will take couple of minutes to propagate'.green);
+      Util.log('Check https://cloud.digitalocean.com/networking/load_balancers for more details');
+    }
+  }
+
+  // --> DROPLETS
 
   // generates N ammount of instances names based on replica count in deployment file
   const instances = Array(deploymentConfig.application.replicas).fill().map((v, i) => `${deploymentConfig.deployment.name}-${UUID.generate()}`);
@@ -73,7 +119,7 @@ module.exports = async (subcommand) => {
     json: {
       names: instances,
       region: deploymentConfig.deployment.region,
-      size: 's-1vcpu-1gb',
+      size: deploymentConfig.application.dropletSize,
       image: deploymentConfig.application.buildpack.split('_')[0],
       backups: false,
       ipv6: true,
@@ -161,52 +207,6 @@ module.exports = async (subcommand) => {
 
     // wait for N seconds before next try
     Sleep(5000);
-  }
-
-  // creates additional services
-  Util.log('Starting to provision services');
-  for (const service of deploymentConfig.services) {
-    if (service.kind == 'loadbalancer') {
-      const dropletIDs = Array();
-      for (const droplet of createdDroplets) {
-        dropletIDs.push(droplet.id)
-      }
-
-      const forwardingRules = Array();
-      for (const rule of service.rules) {
-        forwardingRules.push({
-          entry_protocol: rule.protocol,
-          entry_port: rule.port,
-          target_protocol: rule.protocol,
-          target_port: rule.port,
-          tls_passthrough: rule.protocol == 'https' ? true : false,
-        })
-      }
-
-      const res = Request('POST', 'https://api.digitalocean.com/v2/load_balancers', {
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${profileConfig.apiKey}`,
-        },
-        json: {
-          name: `lb-${deploymentConfig.deployment.name}-${UUID.generate()}`,
-          region: deploymentConfig.deployment.region,
-          sticky_sessions: { type: 'none' },
-          droplet_ids: dropletIDs,
-          forwarding_rules: forwardingRules,
-          health_check: {
-            protocol: 'http',
-            port: 80,
-            path: service.healthcheck,
-            check_interval_seconds: 10,
-            response_timeout_seconds: 5,
-            healthy_threshold: 5,
-            unhealthy_threshold: 3
-          }
-        },
-      });
-      Util.log('Load balancer created but it will take couple of minutes to propagate'.green);
-    }
   }
 
 };

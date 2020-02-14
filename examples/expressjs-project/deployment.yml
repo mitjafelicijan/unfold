@@ -1,3 +1,5 @@
+version: 1
+
 deployment:
   name: my-new-application
   tag: my-app-tag
@@ -9,7 +11,7 @@ deployment:
 
 application:
   buildpack: ubuntu-18-04-x64_nginx
-  size: s-1vcpu-1gb
+  dropletSize: s-1vcpu-1gb
   replicas: 2
 
 services:

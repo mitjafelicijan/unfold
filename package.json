@@ -18,7 +18,9 @@
     "orchestration",
     "microservices",
     "service",
-    "loadbalancing"
+    "loadbalancing",
+    "ci-cd",
+    "continuous-delivery"
   ],
   "author": "Mitja Felicijan",
   "license": "MIT",
