@@ -1,8 +1,8 @@
 version: 1
 
 deployment:
-  name: qwe
-  tag: qwe
+  name: sample
+  tag: sample
   region: nyc1
   sshKeys:
     - 5391863

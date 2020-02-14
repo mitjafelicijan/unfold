@@ -6,6 +6,10 @@
 
 [Ideas, bugs, features can be submitted here »](https://github.com/mitjafelicijan/unfold/issues/new)
 
+## Tutorial
+
+[![asciicast](https://asciinema.org/a/tXryPoUnxK1LtowNusVXimNE6.svg)](https://asciinema.org/a/tXryPoUnxK1LtowNusVXimNE6)
+
 ## Prerequisites
 
 1. [Add SSH key to your account](https://cloud.digitalocean.com/account/security)
